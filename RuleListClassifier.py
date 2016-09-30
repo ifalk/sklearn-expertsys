@@ -86,6 +86,8 @@ class RuleListClassifier(BaseEstimator):
             if self.verbose:
                 print "Warning: non-categorical data found. Trying to discretize. (Please convert categorical values to strings, and/or specify the argument 'undiscretized_features', to avoid this.)"
             X = self.discretize(X, y)
+        else:
+            X = self._prepend_feature_labels(X)
             
         return X
         
@@ -125,6 +127,7 @@ class RuleListClassifier(BaseEstimator):
         permsdic = defaultdict(default_permsdic) #We will store here the MCMC results
         
         data = list(X[:])
+
         #Now find frequent itemsets
         #Mine separately for each class
         data_pos = [x for i,x in enumerate(data) if y[i]==0]
@@ -186,8 +189,10 @@ class RuleListClassifier(BaseEstimator):
                     column += [label + " : " + self.discretizer._data[label][j]]
                 cat_data.iloc[:, i] = np.array(column)
             else:
-                cat_data.iloc[:, i] = D[label]
-        
+                f = lambda x: label + " : " + x
+                cat_data.iloc[:, i] = D[label].map(f)
+                # cat_data.iloc[:, i] = D[label]
+
         return np.array(cat_data).tolist()
     
     def _prepend_feature_labels(self, X):
