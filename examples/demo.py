@@ -1,3 +1,9 @@
+import os, sys
+
+home_dir = os.path.expanduser("~")
+es_dir = os.path.join(home_dir, 'github', 'sklearn-expertsys')
+sys.path.insert(0, es_dir)
+
 from RuleListClassifier import *
 import sklearn.ensemble
 from sklearn.cross_validation import train_test_split
